@@ -111,13 +111,13 @@ function getPasswordOptions() {
     passwordLength = null;  // To prevent the last alert in the caller function 
   }
   else {
-    // Prompts which characters the password should include and adds those characters to character set array
-    hasUppercase = confirm("Does the password include uppercase?");
+    // Prompts which characters the password should include and adds those characters to passwordCharSet array
+    hasUppercase = confirm("Does the password include uppercase characters?");
     if (hasUppercase) {
       passwordCharSet = passwordCharSet.concat(upperCasedCharacters);
     }
 
-    hasLowercase = confirm("Does the password include lowercase?");
+    hasLowercase = confirm("Does the password include lowercase characters?");
     if (hasLowercase) {
       passwordCharSet = passwordCharSet.concat(lowerCasedCharacters);
     }
@@ -158,45 +158,41 @@ function generatePassword() {
 
         // Generates a random string from the password character set
         for (let i = 0; i < passwordLength; i++) {
-          generatedPassword = getRandom(passwordCharSet) + generatedPassword;
+          generatedPassword += getRandom(passwordCharSet);
         }
 
-        // Creates an array from the generated password to check the password characters
+        // Creates an array from the generated password string
         const passwordArray = generatedPassword.split("");
 
-        // Checks if the generated password includes all the required characters
+        // Checking if the generated password includes all the required characters
         var findChar;
-        Check: {
 
-          if (hasLowercase) {
-            // Checks if the generated password has at least one lowercase character
-            findChar = passwordArray.findIndex(element => lowerCasedCharacters.indexOf(element) > -1);
-            if (findChar < 0) break Check;
-          }
-
-          if (hasUppercase) {
-            // Checks if the generated password has at least one uppercase character
-            findChar = passwordArray.findIndex(element => upperCasedCharacters.indexOf(element) > -1);
-            if (findChar < 0) break Check;
-          }
-
-          if (hasNumber) {
-            // Checks if the generated password has at least one numeric character
-            findChar = passwordArray.findIndex(element => numericCharacters.indexOf(element) > -1);
-            if (findChar < 0) break Check;
-          }
-
-          if (hasSpecialChar) {
-            // Checks if the generated password has at least one special character
-            findChar = passwordArray.findIndex(element => specialCharacters.indexOf(element) > -1);
-            if (findChar < 0) break Check;
-          }
+        if (hasLowercase) {
+          // Checks if the generated password has at least one lowercase character
+          findChar = passwordArray.findIndex(element => lowerCasedCharacters.indexOf(element) > -1);
         }
-      } while (findChar < 0);   // If the generated password does not include all the selected character types generate the password again
+
+        if (findChar >= 0 && hasUppercase) {
+          // Checks if the generated password has at least one uppercase character
+          findChar = passwordArray.findIndex(element => upperCasedCharacters.indexOf(element) > -1);
+        }
+
+        if (findChar >= 0 && hasNumber) {
+          // Checks if the generated password has at least one numeric character
+          findChar = passwordArray.findIndex(element => numericCharacters.indexOf(element) > -1);
+        }
+
+        if (findChar >= 0 && hasSpecialChar) {
+          // Checks if the generated password has at least one special character
+          findChar = passwordArray.findIndex(element => specialCharacters.indexOf(element) > -1);
+        }
+
+      } while (findChar < 0);   // If the generated password does not include all the selected character types, generate the password again
 
       return generatedPassword;
 
     } else {
+      // Alerts an error if no character type is selected
       alert("Error! at least one character type should be selected.")
     }
   }
