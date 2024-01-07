@@ -98,18 +98,25 @@ var hasSpecialChar;        // A boolean to store user's choice on including spec
 
 // Function to prompt user for password options
 function getPasswordOptions() {
+  // Initialises the array containing allowed characters
   passwordCharSet = [];
 
+  // Promps and stores password length
   passwordLength = prompt("Enter the length of the password (8 to 128 character)");
-  if (passwordLength < 8 || passwordLength > 128)
-    alert("Invalid input. Password should be between 8 to 128 (inclusive) characters");
-  else {
 
-    // Prompts which characters the password should include and adds those characters to a character set array
+  // Checks if password length is valid
+  if (passwordLength == null) alert("The program canceled.");
+  else if (passwordLength < 8 || passwordLength > 128) {
+    alert("Invalid input. Password should be between 8 to 128 (inclusive) characters");
+    passwordLength = null;  // To prevent the last alert in the caller function 
+  }
+  else {
+    // Prompts which characters the password should include and adds those characters to character set array
     hasUppercase = confirm("Does the password include uppercase?");
     if (hasUppercase) {
       passwordCharSet = passwordCharSet.concat(upperCasedCharacters);
     }
+
     hasLowercase = confirm("Does the password include lowercase?");
     if (hasLowercase) {
       passwordCharSet = passwordCharSet.concat(lowerCasedCharacters);
@@ -120,65 +127,78 @@ function getPasswordOptions() {
       passwordCharSet = passwordCharSet.concat(specialCharacters);
     }
 
-    hasNumber = confirm("Does the password have numbers?");
+    hasNumber = confirm("Does the password include numbers?");
     if (hasNumber) {
       passwordCharSet = passwordCharSet.concat(numericCharacters);
     }
 
   }
-
-
 }
 
 // Function for getting a random element from an array
 function getRandom(arr) {
 
+  // Generates a random integer between 0 to arr.length-1 and returns the element with that index
   let ran = Math.floor(Math.random() * arr.length);
-
-
-  return passwordCharSet[ran];
+  return arr[ran];
 }
 
 // Function to generate password with user input
 function generatePassword() {
+
+  // Calls a function that prompts user for options
   getPasswordOptions();
-  let generatedPassword
 
-  if (passwordCharSet.length != 0) {
-    do {
-      generatedPassword = "";
-      for (let i = 0; i < passwordLength; i++) {
-        generatedPassword = getRandom(passwordCharSet) + generatedPassword;
-      }
-      const passwordArray = generatedPassword.split("");
-      // check if the generated password includes all the required characters
-      var findChar;
-      Check: {
+  let generatedPassword;   // Stores the generated password
 
-        if (hasLowercase) {
-          findChar = passwordArray.findIndex(element => lowerCasedCharacters.indexOf(element) > -1);
-          if (findChar < 0) break Check;
+  if (passwordLength != null) {
+    if (passwordCharSet.length != 0) {
+      do {
+        generatedPassword = "";
+
+        // Generates a random string from the password character set
+        for (let i = 0; i < passwordLength; i++) {
+          generatedPassword = getRandom(passwordCharSet) + generatedPassword;
         }
 
-        if (hasUppercase) {
-          findChar = passwordArray.findIndex(element => upperCasedCharacters.indexOf(element) > -1);
-          if (findChar < 0) break Check;
+        // Creates an array from the generated password to check the password characters
+        const passwordArray = generatedPassword.split("");
+
+        // Checks if the generated password includes all the required characters
+        var findChar;
+        Check: {
+
+          if (hasLowercase) {
+            // Checks if the generated password has at least one lowercase character
+            findChar = passwordArray.findIndex(element => lowerCasedCharacters.indexOf(element) > -1);
+            if (findChar < 0) break Check;
+          }
+
+          if (hasUppercase) {
+            // Checks if the generated password has at least one uppercase character
+            findChar = passwordArray.findIndex(element => upperCasedCharacters.indexOf(element) > -1);
+            if (findChar < 0) break Check;
+          }
+
+          if (hasNumber) {
+            // Checks if the generated password has at least one numeric character
+            findChar = passwordArray.findIndex(element => numericCharacters.indexOf(element) > -1);
+            if (findChar < 0) break Check;
+          }
+
+          if (hasSpecialChar) {
+            // Checks if the generated password has at least one special character
+            findChar = passwordArray.findIndex(element => specialCharacters.indexOf(element) > -1);
+            if (findChar < 0) break Check;
+          }
         }
+      } while (findChar < 0);   // If the generated password does not include all the selected character types generate the password again
 
-        if (hasNumber) {
-          findChar = passwordArray.findIndex(element => numericCharacters.indexOf(element) > -1);
-          if (findChar < 0) break Check;
-        }
+      return generatedPassword;
 
-        if (hasSpecialChar) {
-          findChar = passwordArray.findIndex(element => specialCharacters.indexOf(element) > -1);
-          if (findChar < 0) break Check;
-        }
-
-      }
-
-    } while (findChar < 0);
-    return generatedPassword;
+    } else {
+      alert("Error! at least one character type should be selected.")
+    }
   }
 }
 
