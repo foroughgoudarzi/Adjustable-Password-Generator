@@ -18,7 +18,7 @@ Below, you'll find screenshots depicting the application in action.
 <figcaption><em>Figure.2. Displaying the generated password</em></figcaption>
 </figure>
 
-## Instalation
+## Installation
 
 N/A
 
